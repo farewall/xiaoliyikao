@@ -1,0 +1,35 @@
+<view class="container">
+  <!-- 用户卡片 -->
+  <view class="card user-card">
+    <view class="avatar">🐟</view>
+    <view class="user-info">
+      <view class="nickname">{{userInfo ? userInfo.nickname || '小鲤' : '小鲤'}}</view>
+      <view class="text-secondary">医学考研 306 冲刺中</view>
+    </view>
+  </view>
+
+  <!-- 薄弱点 -->
+  <view class="card">
+    <view class="section-title">薄弱点分析</view>
+    <view wx:if="{{!weakPoints.length}}" class="empty text-secondary">
+      还没有足够的答题记录,多刷几题再来看薄弱点吧
+    </view>
+    <view class="weak-item" wx:for="{{weakPoints}}" wx:key="knowledge_point_id">
+      <view class="weak-main">
+        <text class="weak-name">{{item.subject}}·{{item.knowledge_point_name}}</text>
+        <text class="weak-accuracy text-danger">正确率 {{(item.accuracy * 100).toFixed(0)}}%</text>
+      </view>
+      <view class="text-secondary weak-sub">
+        {{item.wrong_count}} 题做错 / 共 {{item.total_count}} 题
+      </view>
+    </view>
+  </view>
+
+  <!-- 配额 -->
+  <view class="card">
+    <view class="quota-row">
+      <text>AI 追问(免费)</text>
+      <text class="text-secondary">今日剩余 {{quota}} 次</text>
+    </view>
+  </view>
+</view>

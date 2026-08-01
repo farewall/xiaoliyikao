@@ -1,0 +1,32 @@
+<view class="container">
+  <!-- 顶部问候 -->
+  <view class="card">
+    <view class="greeting">早上好 🌅</view>
+    <view class="text-secondary">今日继续冲刺西医综合 306</view>
+  </view>
+
+  <!-- 开始刷题 -->
+  <view class="card">
+    <view class="section-title">开始刷题</view>
+    <view class="subject-list">
+      <view class="subject-item" bindtap="onQuiz" data-count="10">
+        <view class="subject-name">随机 10 题</view>
+        <view class="subject-desc">全科随机,检验手感</view>
+      </view>
+      <view class="subject-item" bindtap="onQuiz" data-count="20">
+        <view class="subject-name">随机 20 题</view>
+        <view class="subject-desc">整组练习,保持状态</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- AI 答疑入口 -->
+  <view class="card">
+    <view class="section-title">AI 答疑</view>
+    <view class="text-secondary">做题后遇到不懂的点,在解析页直接追问 AI,直到彻底搞懂。</view>
+    <view class="quota-bar" wx:if="{{quotaLoaded}}">
+      <text>今日剩余追问次数:</text>
+      <text class="quota-num">{{quota}} 次</text>
+    </view>
+  </view>
+</view>

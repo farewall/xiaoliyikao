@@ -1,0 +1,44 @@
+.greeting {
+  font-size: 40rpx;
+  font-weight: 600;
+  margin-bottom: 8rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  margin-bottom: 20rpx;
+}
+
+.subject-item {
+  padding: 20rpx;
+  border: 2rpx solid #e2e8f0;
+  border-radius: 12rpx;
+  margin-bottom: 16rpx;
+}
+
+.subject-item:active {
+  background: #f0f7ff;
+}
+
+.subject-name {
+  font-size: 30rpx;
+  font-weight: 500;
+}
+
+.subject-desc {
+  font-size: 24rpx;
+  color: #888;
+  margin-top: 4rpx;
+}
+
+.quota-bar {
+  margin-top: 20rpx;
+  padding-top: 16rpx;
+  border-top: 2rpx solid #f0f0f0;
+}
+
+.quota-num {
+  color: #2B6CB0;
+  font-weight: 600;
+}

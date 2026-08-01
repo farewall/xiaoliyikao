@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Bash(npm --version)",
+      "Bash(git --version)",
+      "Bash(docker --version)",
+      "Bash(pip --version)",
+      "Bash(pip3 --version)",
+      "Bash(uv --version)",
+      "Read(//c/Program Files \\\\\\(x86\\\\\\)/Tencent/微信web开发者工具/**)",
+      "Read(//c/Program Files/Tencent/**)",
+      "Bash(where python *)",
+      "Bash(py -3 --version)",
+      "Bash(conda --version)",
+      "Bash(pyenv --version)",
+      "Bash(docker compose *)",
+      "Bash(docker info *)",
+      "Bash(tasklist)",
+      "Bash(ls \"C:\\\\Program Files\\\\Docker\\\\Docker\\\\Docker Desktop.exe\" 2>/dev/null && echo \"找到 Docker Desktop\" || echo \"未在默认路径找到\")",
+      "Read(//c/Program Files/Docker/Docker/**)",
+      "Bash(\"C:\\\\Program Files\\\\Docker\\\\Docker\\\\Docker Desktop.exe\")",
+      "Read(//c/Users/shterm/.docker/**)",
+      "Read(//c/Users/shterm/.docker\" 2>/dev/**)",
+      "Bash(./com.docker.cli.exe)",
+      "Bash(docker desktop *)",
+      "Bash(taskkill //F //IM \"Docker Desktop.exe\")",
+      "Bash(taskkill //F //IM \"com.docker.backend.exe\")"
+    ]
+  }
+}
