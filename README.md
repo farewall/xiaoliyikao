@@ -27,9 +27,7 @@
 医学考研微信小程序/
 ├── backend/          # FastAPI 后端
 │   ├── app/          # 应用代码
-│   ├── tests/        # 测试
-│   ├── Dockerfile    # 后端容器
-│   └── docker-compose.yml  # 后端 + 数据库编排
+│   └── tests/        # 测试
 ├── miniprogram/      # 微信小程序前端
 └── 讨论记录.md        # 产品讨论共识
 ```
@@ -37,6 +35,11 @@
 ## 快速开始
 
 见 `backend/README.md`（后端）与 `miniprogram/README.md`（前端）。
+
+## 文档
+
+- `docs/database-design.md` — 数据库表结构设计
+- `docs/progress.md` — 项目进度与待办
 
 ## 里程碑
 

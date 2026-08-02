@@ -14,13 +14,19 @@ from app.database import get_db
 from app.models.answer_record import AnswerRecord
 from app.models.knowledge_point import KnowledgePoint
 from app.models.question import Question
+from app.models.user import User
 from app.schemas.question import AnswerResult, AnswerSubmit, QuestionOut, QuizRequest
+from app.services.auth import get_current_user
 
 router = APIRouter(prefix="/questions", tags=["questions"])
 
 
 @router.post("/quiz", response_model=list[QuestionOut])
-def create_quiz(payload: QuizRequest, db: Session = Depends(get_db)) -> list[Question]:
+def create_quiz(
+    payload: QuizRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> list[Question]:
     """组一套题。可空参数:默认取全库随机题。
 
     按 subject/chapter 过滤时,经考点表(knowledge_points)联查。
@@ -42,7 +48,11 @@ def create_quiz(payload: QuizRequest, db: Session = Depends(get_db)) -> list[Que
 
 
 @router.post("/answer", response_model=AnswerResult)
-def submit_answer(payload: AnswerSubmit, db: Session = Depends(get_db)) -> AnswerResult:
+def submit_answer(
+    payload: AnswerSubmit,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> AnswerResult:
     """提交答案,判分并记录。"""
     question = db.get(Question, payload.question_id)
     if question is None:
@@ -52,9 +62,9 @@ def submit_answer(payload: AnswerSubmit, db: Session = Depends(get_db)) -> Answe
     correct_answer = sorted(question.answer)
     is_correct = user_answer == correct_answer
 
-    # 记录答题(开发期以 user_id=1 占位,登录体系接入后替换)
+    # 答题记录归属当前登录用户
     record = AnswerRecord(
-        user_id=1,
+        user_id=current_user.id,
         question_id=question.id,
         user_answer=user_answer,
         is_correct=is_correct,

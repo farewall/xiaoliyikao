@@ -7,25 +7,27 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.database import get_db
+from app.models.user import User
 from app.schemas.ai import AIAskRequest, AIAskResponse
+from app.services.auth import get_current_user
 from app.services.quota import QuotaExceededError, consume, get_remaining
 from app.services.rag import RAGService
 
 router = APIRouter(prefix="/ai", tags=["ai"])
 
-# 开发期用户占位;登录体系接入后从请求中取真实 user_id
-DEV_USER_ID = 1
-IS_PAID_DEV = False
-
 rag_service = RAGService()
 
 
 @router.post("/ask", response_model=AIAskResponse)
-def ask(payload: AIAskRequest, db: Session = Depends(get_db)) -> AIAskResponse:
+def ask(
+    payload: AIAskRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> AIAskResponse:
     """针对某道题的追问答疑。消费一次免费配额。"""
     # 1. 配额检查 + 消耗
     try:
-        remaining = consume(db, DEV_USER_ID, is_paid=IS_PAID_DEV)
+        remaining = consume(db, current_user.id)
     except QuotaExceededError as e:
         raise HTTPException(status_code=402, detail=str(e)) from e
 
@@ -43,7 +45,10 @@ def ask(payload: AIAskRequest, db: Session = Depends(get_db)) -> AIAskResponse:
 
 
 @router.get("/quota", response_model=dict)
-def quota(db: Session = Depends(get_db)) -> dict:
+def quota(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> dict:
     """查询今日剩余免费追问次数。"""
-    remaining = get_remaining(db, DEV_USER_ID, is_paid=IS_PAID_DEV)
+    remaining = get_remaining(db, current_user.id)
     return {"quota_remaining": remaining}

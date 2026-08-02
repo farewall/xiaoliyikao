@@ -14,6 +14,12 @@ class UserOut(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class LoginResponse(BaseModel):
+    """登录成功返回:JWT + 用户信息。前端保存 token,后续请求携带。"""
+    token: str
+    user: UserOut
+
+
 class WeakPoint(BaseModel):
     """薄弱点聚合结果。"""
     subject: str

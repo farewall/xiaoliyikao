@@ -16,7 +16,14 @@ Page({
 
   loadWeakPoints() {
     app.request({ url: '/weakness' })
-      .then((list) => this.setData({ weakPoints: list }))
+      .then((list) => {
+        // WXML 模板不支持调用方法(如 .toFixed),百分比在 JS 层算好再展示
+        const weakPoints = (list || []).map((item) => ({
+          ...item,
+          accuracy_percent: Math.round((item.accuracy || 0) * 100)
+        }))
+        this.setData({ weakPoints })
+      })
       .catch(() => {})
   },
 

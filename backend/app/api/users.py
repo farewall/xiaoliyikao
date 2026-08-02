@@ -11,7 +11,8 @@ from sqlalchemy.orm import Session
 from app.config import settings
 from app.database import get_db
 from app.models.user import User
-from app.schemas.user import UserLoginRequest, UserOut
+from app.schemas.user import LoginResponse, UserLoginRequest, UserOut
+from app.services.auth import create_token
 
 router = APIRouter(prefix="/users", tags=["users"])
 
@@ -22,19 +23,17 @@ async def exchange_code_for_openid(code: str) -> str:
     需在配置中提供 WECHAT_APPID / WECHAT_SECRET 才会真正调用微信;
     未配置时(开发期)用 code 本身作为测试 openid,便于本地联调。
     """
-    appid = getattr(settings, "wechat_appid", None)
-    secret = getattr(settings, "wechat_secret", None)
-    if not appid or not secret:
-        # 开发占位:让本地联调不依赖微信凭据
-        return f"dev-openid-{code}"
+    if not settings.wechat_appid or not settings.wechat_secret:
+        # 开发占位:固定 openid,让本地联调复用同一用户(贴近生产行为)
+        return "dev-openid"
 
     url = "https://api.weixin.qq.com/sns/jscode2session"
     async with httpx.AsyncClient() as client:
         resp = await client.get(
             url,
             params={
-                "appid": appid,
-                "secret": secret,
+                "appid": settings.wechat_appid,
+                "secret": settings.wechat_secret,
                 "js_code": code,
                 "grant_type": "authorization_code",
             },
@@ -46,9 +45,9 @@ async def exchange_code_for_openid(code: str) -> str:
         return openid
 
 
-@router.post("/login", response_model=UserOut)
-async def login(payload: UserLoginRequest, db: Session = Depends(get_db)) -> User:
-    """登录:code 换 openid,存在则返回,不存在则创建。"""
+@router.post("/login", response_model=LoginResponse)
+async def login(payload: UserLoginRequest, db: Session = Depends(get_db)) -> LoginResponse:
+    """登录:code 换 openid,查/建用户,签发 JWT(token)。"""
     openid = await exchange_code_for_openid(payload.code)
 
     user = db.query(User).filter(User.openid == openid).first()
@@ -57,4 +56,6 @@ async def login(payload: UserLoginRequest, db: Session = Depends(get_db)) -> Use
         db.add(user)
         db.commit()
         db.refresh(user)
-    return user
+
+    token = create_token(user)
+    return LoginResponse(token=token, user=UserOut.model_validate(user))

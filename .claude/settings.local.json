@@ -25,7 +25,41 @@
       "Bash(./com.docker.cli.exe)",
       "Bash(docker desktop *)",
       "Bash(taskkill //F //IM \"Docker Desktop.exe\")",
-      "Bash(taskkill //F //IM \"com.docker.backend.exe\")"
+      "Bash(taskkill //F //IM \"com.docker.backend.exe\")",
+      "WebFetch(domain:help.aliyun.com)",
+      "Bash(rm /d/xiaoliyikao/backend/Dockerfile /d/xiaoliyikao/backend/docker-compose.yml && echo \"deleted\" && ls /d/xiaoliyikao/backend)",
+      "Bash(git check-ignore *)",
+      "Bash(git rm *)",
+      "Bash(timeout 6 bash -c 'echo > /dev/tcp/120.26.77.248/5432')",
+      "Bash(timeout 6 bash -c 'echo > /dev/tcp/120.26.77.248/22')",
+      "Bash(python -c \"import psycopg2; print\\('psycopg2 OK'\\)\")",
+      "Bash(py --version)",
+      "Bash(where psql *)",
+      "Bash(py -m venv .venv)",
+      "Bash(.venv/Scripts/python -m pip install --quiet --disable-pip-version-check -r requirements.txt)",
+      "Bash(.venv/Scripts/python -c \"import fastapi, sqlalchemy, pydantic, psycopg2; print\\('deps OK'\\)\")",
+      "Bash(.venv/Scripts/python -c ' *)",
+      "Bash(DATABASE_URL=\"postgresql+psycopg2://xiaoliyikao:shterm123@120.26.77.248:5432/xiaoliyikao_dev\" .venv/Scripts/python -m uvicorn app.main:app --host 127.0.0.1 --port 8000)",
+      "Read(//tmp/**)",
+      "Bash(curl -s http://127.0.0.1:8000/health)",
+      "Bash(taskkill //F //PID 32992)",
+      "Bash(tail -40 /tmp/uvicorn_dev.log)",
+      "Bash(taskkill //F //PID 22092)",
+      "Bash(DATABASE_URL=\"postgresql+psycopg2://xiaoliyikao:shterm123@120.26.77.248:5432/xiaoliyikao_dev\" .venv/Scripts/python -m uvicorn app.main:app --host 0.0.0.0 --port 8000)",
+      "Bash(curl -s http://localhost:8000/ai/quota)",
+      "Bash(curl -s -X POST http://localhost:8000/users/login -H \"Content-Type: application/json\" -d '{\"code\":\"dev-test\"}')",
+      "Bash(grep -E \"Error|error|Exception|Traceback\" -A 3 /tmp/uvicorn_dev.log | tail -30)",
+      "Bash(taskkill //F //PID 5696)",
+      "Bash(curl -s http://localhost:8000/health)",
+      "Bash(DATABASE_URL=\"postgresql+psycopg2://xiaoliyikao:shterm123@120.26.77.248:5432/xiaoliyikao_dev\" .venv/Scripts/python seed.py)",
+      "WebFetch(domain:developers.weixin.qq.com)",
+      "Bash(.venv/Scripts/python -m pip install --quiet --disable-pip-version-check \"pyjwt==2.10.1\")",
+      "Bash(.venv/Scripts/python -c \"import jwt; print\\('pyjwt', jwt.__version__\\)\")",
+      "Bash(cat \"/c/Users/xsn/.claude/projects/d--xiaoliyikao/memory/MEMORY.md\" 2>/dev/null || echo \"MEMORY.md 不存在,将创建\")",
+      "Read(//c/Users/xsn/.claude/projects/d--xiaoliyikao/memory/**)"
+    ],
+    "additionalDirectories": [
+      "D:\\xiaoliyikao\\backend"
     ]
   }
 }

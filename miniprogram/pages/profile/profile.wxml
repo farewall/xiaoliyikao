@@ -17,7 +17,7 @@
     <view class="weak-item" wx:for="{{weakPoints}}" wx:key="knowledge_point_id">
       <view class="weak-main">
         <text class="weak-name">{{item.subject}}·{{item.knowledge_point_name}}</text>
-        <text class="weak-accuracy text-danger">正确率 {{(item.accuracy * 100).toFixed(0)}}%</text>
+        <text class="weak-accuracy text-danger">正确率 {{item.accuracy_percent}}%</text>
       </view>
       <view class="text-secondary weak-sub">
         {{item.wrong_count}} 题做错 / 共 {{item.total_count}} 题

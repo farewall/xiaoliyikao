@@ -23,7 +23,6 @@ uvicorn app.main:app --reload        # 启动
 
 - MVP 阶段使用**普通 PostgreSQL**,**不依赖 pgvector**(向量检索为预留能力)。
 - 将来做语义检索/相似题推荐时,再启用 pgvector(见 `models/question.py` 注释)。
-- `docker-compose.yml` 是「将来整体部署」的备选方案(含 pgvector),当前开发不强制使用。
 
 ## 常用命令
 
