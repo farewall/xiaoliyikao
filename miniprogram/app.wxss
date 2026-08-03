@@ -1,8 +1,10 @@
-/**app.wxss - 全局样式*/
+/**app.wxss - 全局样式(清新医药风设计系统)
+设计语言:一套 token 分层应用——营销/汇总页尽情用渐变,功能页克制保可读性。
+共享类集中在全局,页面按需引用(路线 A,不抽组件)。*/
 page {
-  background: #f5f6f8;
+  background: #f3f6fa;
   font-size: 28rpx;
-  color: #2d2d2d;
+  color: #2d3748;
 }
 
 .container {
@@ -12,28 +14,193 @@ page {
 /* 卡片 */
 .card {
   background: #fff;
-  border-radius: 16rpx;
+  border-radius: 24rpx;
   padding: 24rpx;
   margin-bottom: 24rpx;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+  box-shadow: 0 6rpx 24rpx rgba(43, 108, 176, 0.06);
 }
 
-/* 按钮 */
+/* 主按钮:品牌渐变 */
 .btn-primary {
-  background: #2B6CB0;
+  background: linear-gradient(135deg, #5BA9FF 0%, #2B6CB0 100%);
   color: #fff;
-  border-radius: 12rpx;
+  border-radius: 16rpx;
   font-size: 30rpx;
-  padding: 20rpx 0;
+  font-weight: 500;
+  padding: 22rpx 0;
   text-align: center;
+  box-shadow: 0 8rpx 20rpx rgba(43, 108, 176, 0.25);
 }
 
 .btn-primary:active {
   opacity: 0.85;
+  transform: scale(0.98);
 }
 
-.btn-primary[disabled] {
+.btn-primary[disabled],
+.btn-primary.disabled {
   background: #a8c6e2;
+  box-shadow: none;
+}
+
+/* 次按钮 */
+.btn-secondary {
+  background: #fff;
+  color: #2B6CB0;
+  border: 2rpx solid #2B6CB0;
+  border-radius: 16rpx;
+  font-size: 30rpx;
+  font-weight: 500;
+  padding: 20rpx 0;
+  text-align: center;
+}
+
+.btn-secondary:active {
+  opacity: 0.85;
+  transform: scale(0.98);
+}
+
+.btn-secondary.disabled {
+  border-color: #e2e8f0;
+  color: #b0b8c4;
+}
+
+/* 段落小标题 */
+.section-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 20rpx;
+}
+
+/* 纵向操作行 */
+.action-row {
+  margin-top: 32rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+/* 选择芯片(配置页) */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.chip {
+  padding: 14rpx 28rpx;
+  border: 2rpx solid #e2e8f0;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+  color: #4a5568;
+  background: #fff;
+  transition: all 0.15s ease;
+}
+
+.chip-selected {
+  border-color: transparent;
+  background: linear-gradient(135deg, #5BA9FF 0%, #2B6CB0 100%);
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 6rpx 16rpx rgba(43, 108, 176, 0.25);
+}
+
+/* 选项行(quiz / mock 共用,克制保可读性) */
+.option {
+  display: flex;
+  align-items: flex-start;
+  padding: 22rpx;
+  border: 2rpx solid #e2e8f0;
+  border-radius: 20rpx;
+  margin-bottom: 16rpx;
+  transition: all 0.15s ease;
+}
+
+.option.selected {
+  border-color: #2B6CB0;
+  background: linear-gradient(135deg, #f0f7ff 0%, #e8f1ff 100%);
+  box-shadow: 0 4rpx 12rpx rgba(43, 108, 176, 0.12);
+}
+
+.option-key {
+  width: 48rpx;
+  height: 48rpx;
+  line-height: 48rpx;
+  text-align: center;
+  border-radius: 50%;
+  background: #edf2f7;
+  color: #4a5568;
+  font-weight: 600;
+  margin-right: 16rpx;
+  flex-shrink: 0;
+}
+
+.option.selected .option-key {
+  background: linear-gradient(135deg, #5BA9FF, #2B6CB0);
+  color: #fff;
+}
+
+.option-text {
+  flex: 1;
+  line-height: 1.5;
+  color: #2d3748;
+}
+
+/* 题干 */
+.stem {
+  font-size: 32rpx;
+  line-height: 1.6;
+  margin-bottom: 24rpx;
+}
+
+/* AI 追问块(quiz / explain 共用) */
+.ask-block {
+  margin-top: 24rpx;
+  padding-top: 24rpx;
+  border-top: 2rpx solid #f0f0f0;
+}
+
+.ask-input {
+  width: 100%;
+  height: 140rpx;
+  border: 2rpx solid #e2e8f0;
+  border-radius: 20rpx;
+  padding: 16rpx;
+  box-sizing: border-box;
+  font-size: 28rpx;
+  margin-bottom: 16rpx;
+  background: #fafcff;
+}
+
+.ask-actions {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.ask-actions .btn-primary {
+  flex: 1;
+}
+
+.quota-remaining {
+  flex-shrink: 0;
+}
+
+.ai-answer {
+  margin-top: 24rpx;
+  padding-top: 24rpx;
+  border-top: 2rpx solid #f0f0f0;
+}
+
+.ai-answer-text {
+  line-height: 1.7;
+  font-size: 28rpx;
+}
+
+.ai-references {
+  margin-top: 12rpx;
+  font-size: 22rpx;
 }
 
 /* 文本工具 */

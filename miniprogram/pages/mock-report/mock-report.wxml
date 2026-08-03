@@ -1,0 +1,54 @@
+<view class="container">
+  <!-- 成绩卡 -->
+  <view class="card center">
+    <view class="report-title">模拟测试报告</view>
+    <view class="score-line">答对 {{correctCount}} / {{totalCount}} 题</view>
+    <view class="est-score">{{estScore}} <text class="est-unit">分</text></view>
+    <view class="text-secondary" wx:if="{{!isFullPaper}}">局部卷估分,仅供参考</view>
+    <view class="text-secondary" wx:else>按 306 满分 300 折算</view>
+  </view>
+
+  <!-- 正向引导(提分空间措辞 + 可行动按钮) -->
+  <view class="card tip-card">
+    <view>{{tip}}</view>
+    <view wx:if="{{weakSubject}}" class="btn-primary tip-btn" bindtap="onPracticeWeak">去练「{{weakSubject}}」</view>
+  </view>
+
+  <!-- 各科正确率 -->
+  <view class="card" wx:if="{{subjects.length}}">
+    <view class="section-title">各科正确率</view>
+    <view class="subject-row" wx:for="{{subjects}}" wx:key="subject">
+      <text class="subject-name">{{item.subject}}</text>
+      <view class="subject-bar">
+        <view class="subject-fill" style="width:{{item.accuracyPercent}}%"></view>
+      </view>
+      <text class="subject-pct">{{item.accuracyPercent}}%</text>
+    </view>
+  </view>
+
+  <!-- 重点回顾 -->
+  <view class="card" wx:if="{{wrongList.length}}">
+    <view class="section-title">重点回顾</view>
+    <view
+      class="wrong-item"
+      wx:for="{{wrongList}}"
+      wx:key="question_id"
+      data-questionid="{{item.question_id}}"
+      data-useranswer="{{item.user_answer}}"
+      bindtap="onOpenWrong"
+    >
+      <view class="wrong-stem">{{item.stem}}</view>
+      <view class="text-secondary">你的答案:{{item.userAnswerText}} · 查看解析 ›</view>
+    </view>
+  </view>
+  <view class="card" wx:else>
+    <view class="section-title">重点回顾</view>
+    <view class="text-secondary">这轮全对,状态很好!</view>
+  </view>
+
+  <!-- 动作 -->
+  <view class="action-row">
+    <view class="btn-primary" bindtap="onAgain">再来一套</view>
+    <view class="btn-secondary" bindtap="onHome">回首页</view>
+  </view>
+</view>

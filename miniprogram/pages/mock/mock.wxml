@@ -1,0 +1,36 @@
+<view class="container">
+  <!-- 加载中 -->
+  <view wx:if="{{loading}}" class="card center">
+    <view class="text-secondary">试卷加载中…</view>
+  </view>
+
+  <block wx:else>
+    <!-- 状态栏:倒计时 + 进度 -->
+    <view class="exam-bar">
+      <view class="timer {{remaining <= 300 ? 'timer-warn' : ''}}">{{timeText}}</view>
+      <view class="exam-progress">第 {{current + 1}} / {{totalCount}} 题 · 已答 {{answeredCount}}</view>
+    </view>
+
+    <!-- 题目 -->
+    <view class="card">
+      <view class="stem">{{currentQuestion.stem}}</view>
+      <view
+        class="option {{selected.indexOf(key) > -1 ? 'selected' : ''}}"
+        wx:for="{{optionKeys}}"
+        wx:key="*this"
+        data-key="{{item}}"
+        bindtap="onToggleOption"
+      >
+        <view class="option-key">{{item}}</view>
+        <view class="option-text">{{currentQuestion.options[item]}}</view>
+      </view>
+    </view>
+
+    <!-- 导航 -->
+    <view class="nav-row">
+      <view class="btn-secondary {{current === 0 ? 'disabled' : ''}}" bindtap="onPrev">上一题</view>
+      <view class="btn-primary" bindtap="onSubmit">{{submitting ? '交卷中…' : '交卷'}}</view>
+      <view class="btn-secondary {{current >= totalCount - 1 ? 'disabled' : ''}}" bindtap="onNext">下一题</view>
+    </view>
+  </block>
+</view>

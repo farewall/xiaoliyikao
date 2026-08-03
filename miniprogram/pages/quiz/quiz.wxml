@@ -4,17 +4,45 @@
     <view class="text-secondary">题目加载中…</view>
   </view>
 
-  <!-- 空题库 -->
-  <view wx:elif="{{!questions.length}}" class="card center">
-    <view class="text-secondary">题库还空着,先去后端录入题目吧</view>
-  </view>
+  <!-- 小结 -->
+  <block wx:elif="{{phase === 'summary'}}">
+    <view class="card center">
+      <view class="summary-title">本轮练习完成 🎉</view>
+      <view class="summary-score">答对了 {{correctCount}} 题</view>
+      <view class="text-secondary">共 {{totalCount}} 题 · 正确率 {{accuracyPercent}}%</view>
+    </view>
 
-  <!-- 做题 -->
+    <!-- 错题回顾 -->
+    <view class="card" wx:if="{{wrongQuestions.length}}">
+      <view class="section-title">重点回顾</view>
+      <view class="weak-item" wx:for="{{wrongQuestions}}" wx:key="id"
+        data-questionid="{{item.id}}"
+        data-useranswer="{{item.userAnswer}}"
+        bindtap="onOpenWrong"
+      >
+        <view class="weak-main">
+          <text class="weak-name">{{item.stem}}</text>
+          <text class="text-secondary">查看解析 ›</text>
+        </view>
+      </view>
+    </view>
+    <view class="card" wx:else>
+      <view class="section-title">重点回顾</view>
+      <view class="text-secondary">这轮全对,继续保持!</view>
+    </view>
+
+    <view class="action-row">
+      <view class="btn-primary" wx:if="{{wrongQuestions.length}}" bindtap="onRetryWrong">重练错题</view>
+      <view class="btn-secondary" bindtap="onAgain">再来一组</view>
+      <view class="btn-secondary" bindtap="onFinish">完成</view>
+    </view>
+  </block>
+
+  <!-- 答题 -->
   <block wx:else>
     <view class="progress">第 {{current + 1}} / {{questions.length}} 题</view>
 
     <view class="card">
-      <!-- 题干 -->
       <view class="stem">{{currentQuestion.stem}}</view>
 
       <!-- 选项 -->
@@ -28,12 +56,56 @@
         <view class="option-key">{{item}}</view>
         <view class="option-text">{{currentQuestion.options[item]}}</view>
       </view>
+
+      <!-- 提交 -->
+      <view wx:if="{{!submitted}}" class="action-row">
+        <view class="btn-primary {{selected.length ? '' : 'disabled'}}" bindtap="onSubmit">提交答案</view>
+      </view>
     </view>
 
-    <!-- 操作区 -->
-    <view class="action-row">
-      <view class="btn-primary {{selected.length ? '' : 'disabled'}}" bindtap="onSubmit">
-        提交答案
+    <!-- 原地反馈 -->
+    <view class="card" wx:if="{{submitted && lastResult}}">
+      <view class="result {{lastResult.is_correct ? 'text-success' : 'text-danger'}}">
+        {{lastResult.is_correct ? '✓ 回答正确' : '✗ 这题值得回看'}}
+      </view>
+      <view wx:if="{{!lastResult.is_correct}}" class="correct-answer">
+        正确答案:{{correctAnswerText}}
+      </view>
+      <view class="text-secondary">你的答案:{{userAnswerText}}</view>
+
+      <view class="section-title" style="margin-top:20rpx">解析</view>
+      <view class="explanation">{{lastResult.explanation}}</view>
+
+      <!-- AI 追问 -->
+      <view class="ask-block">
+        <view class="section-title">没看懂?问 AI 教练 🐟</view>
+        <textarea
+          class="ask-input"
+          placeholder="针对这道题,哪里不明白?比如:为什么选 C 不选 B?"
+          value="{{userQuestion}}"
+          bindinput="onQuestionInput"
+          maxlength="300"
+        />
+        <view class="ask-actions">
+          <view class="btn-primary {{asking ? 'disabled' : ''}}" bindtap="onAsk">
+            {{asking ? 'AI 思考中…' : '追问'}}
+          </view>
+          <view class="quota-remaining text-secondary" wx:if="{{quotaRemaining !== null}}">
+            今日剩余 {{quotaRemaining}} 次
+          </view>
+        </view>
+        <view class="ai-answer" wx:if="{{aiAnswer}}">
+          <view class="ai-answer-text">{{aiAnswer}}</view>
+          <view class="ai-references text-secondary" wx:if="{{aiReferencesText}}">
+            参考:{{aiReferencesText}}
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="action-row" wx:if="{{submitted}}">
+      <view class="btn-primary" bindtap="onNext">
+        {{current + 1 >= questions.length ? '查看小结' : '下一题'}}
       </view>
     </view>
   </block>

@@ -1,32 +1,48 @@
 <view class="container">
-  <!-- 顶部问候 -->
-  <view class="card">
-    <view class="greeting">早上好 🌅</view>
-    <view class="text-secondary">今日继续冲刺西医综合 306</view>
-  </view>
-
-  <!-- 开始刷题 -->
-  <view class="card">
-    <view class="section-title">开始刷题</view>
-    <view class="subject-list">
-      <view class="subject-item" bindtap="onQuiz" data-count="10">
-        <view class="subject-name">随机 10 题</view>
-        <view class="subject-desc">全科随机,检验手感</view>
+  <!-- 渐变头部 Hero -->
+  <view class="hero">
+    <view class="hero-top">
+      <view class="hero-greet">
+        <view class="hero-greet-title">{{greeting}},{{nickname || '同学'}}</view>
+        <view class="hero-greet-sub">每天进步一点点,坚持就是胜利</view>
       </view>
-      <view class="subject-item" bindtap="onQuiz" data-count="20">
-        <view class="subject-name">随机 20 题</view>
-        <view class="subject-desc">整组练习,保持状态</view>
+      <view class="hero-avatar">🐟</view>
+    </view>
+
+    <view class="hero-stats">
+      <view class="hero-stat">
+        <view class="hero-num">{{todayCount}}</view>
+        <view class="hero-label">今日已刷</view>
+      </view>
+      <view class="hero-stat">
+        <view class="hero-num">{{totalCount}}</view>
+        <view class="hero-label">累计已刷</view>
+      </view>
+      <view class="hero-stat">
+        <view class="hero-num">{{aiQuota === null ? '—' : aiQuota}}</view>
+        <view class="hero-label">AI 追问</view>
       </view>
     </view>
   </view>
 
-  <!-- AI 答疑入口 -->
-  <view class="card">
-    <view class="section-title">AI 答疑</view>
-    <view class="text-secondary">做题后遇到不懂的点,在解析页直接追问 AI,直到彻底搞懂。</view>
-    <view class="quota-bar" wx:if="{{quotaLoaded}}">
-      <text>今日剩余追问次数:</text>
-      <text class="quota-num">{{quota}} 次</text>
+  <!-- 刷题入口 -->
+  <view class="entry-list">
+    <view class="card entry-card" bindtap="onPractice">
+      <view class="entry-icon practice">📖</view>
+      <view class="entry-main">
+        <view class="entry-title">练习</view>
+        <view class="entry-desc">单科聚焦 · 答一题讲一题 · 巩固考点</view>
+      </view>
+      <view class="entry-arrow">›</view>
+    </view>
+
+    <view class="card entry-card" bindtap="onMock">
+      <view class="entry-icon mock">⏱️</view>
+      <view class="entry-main">
+        <view class="entry-title">模拟测试</view>
+        <view class="entry-desc">仿真限时 · 检验真实水平 · 出估分报告</view>
+      </view>
+      <view class="entry-arrow">›</view>
     </view>
   </view>
 </view>

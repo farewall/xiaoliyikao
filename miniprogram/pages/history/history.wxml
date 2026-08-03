@@ -1,0 +1,72 @@
+<view class="container">
+  <!-- 切换 -->
+  <view class="tabs">
+    <view class="tab {{tab === 'practice' ? 'tab-active' : ''}}" data-tab="practice" bindtap="switchTab">练习记录</view>
+    <view class="tab {{tab === 'mock' ? 'tab-active' : ''}}" data-tab="mock" bindtap="switchTab">模拟测试</view>
+  </view>
+
+  <!-- 练习记录 -->
+  <block wx:if="{{tab === 'practice'}}">
+    <view wx:if="{{loadingPractice}}" class="card center"><view class="text-secondary">加载中…</view></view>
+    <view wx:elif="{{!practiceGroups.length}}" class="card center"><view class="text-secondary">还没有练习记录,去刷一题吧</view></view>
+    <block wx:else>
+      <view class="day-group" wx:for="{{practiceGroups}}" wx:key="label" wx:for-item="group">
+        <view class="day-label">{{group.label}}</view>
+        <view class="card" wx:for="{{group.items}}" wx:key="id" wx:for-item="item">
+          <view class="rec-row" data-id="{{item.id}}" bindtap="togglePractice">
+            <view class="rec-icon practice">📖</view>
+            <view class="rec-main">
+              <view class="rec-title">{{item.title}} · {{item.count}} 题</view>
+              <view class="text-secondary">{{item.timeLabel}}</view>
+            </view>
+            <view class="rec-right">
+              <view class="rec-acc">{{item.accuracyPercent}}%</view>
+              <view class="text-secondary">{{item.correct}} / {{item.total}} 题</view>
+            </view>
+          </view>
+
+          <!-- 展开的该轮错题 -->
+          <view wx:if="{{item.expanded && item.wrongQuestions.length}}">
+            <view class="wrong-block">
+              <view
+                class="wrong-item"
+                wx:for="{{item.wrongQuestions}}"
+                wx:for-item="wrong"
+                wx:key="question_id"
+                data-questionid="{{wrong.question_id}}"
+                data-useranswer="{{wrong.user_answer}}"
+                bindtap="onOpenWrong"
+              >
+                <view class="wrong-stem">{{wrong.stem}}</view>
+                <view class="text-secondary">查看解析 ›</view>
+              </view>
+            </view>
+          </view>
+          <view wx:if="{{item.expanded && !item.wrongQuestions.length}}" class="text-secondary wrong-empty">这轮全对 🎉</view>
+        </view>
+      </view>
+    </block>
+  </block>
+
+  <!-- 模拟测试记录 -->
+  <block wx:else>
+    <view wx:if="{{loadingMock}}" class="card center"><view class="text-secondary">加载中…</view></view>
+    <view wx:elif="{{!mockGroups.length}}" class="card center"><view class="text-secondary">还没有模拟测试记录</view></view>
+    <block wx:else>
+      <view class="day-group" wx:for="{{mockGroups}}" wx:key="label" wx:for-item="group">
+        <view class="day-label">{{group.label}}</view>
+        <view class="card rec-row" wx:for="{{group.items}}" wx:key="id" wx:for-item="item" data-id="{{item.id}}" bindtap="onOpenMock">
+          <view class="rec-icon mock">⏱️</view>
+          <view class="rec-main">
+            <view class="rec-title">{{item.paperType}} 题模拟</view>
+            <view class="text-secondary">{{item.timeLabel}}</view>
+          </view>
+          <view class="rec-right">
+            <view class="rec-acc">估分 {{item.estScore}} 分</view>
+            <view class="text-secondary">{{item.accuracyPercent}}% · {{item.correct}}/{{item.total}}</view>
+          </view>
+        </view>
+      </view>
+    </block>
+  </block>
+</view>

@@ -1,0 +1,44 @@
+.center {
+  text-align: center;
+  padding: 80rpx 24rpx;
+}
+
+/* 顶部考试状态栏(卡片化,克制保专注) */
+.exam-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 28rpx;
+  margin-bottom: 24rpx;
+  background: #fff;
+  border-radius: 20rpx;
+  box-shadow: 0 6rpx 24rpx rgba(43, 108, 176, 0.06);
+}
+
+.timer {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #2B6CB0;
+  font-variant-numeric: tabular-nums;
+}
+
+.timer-warn {
+  color: #e53e3e;
+}
+
+.exam-progress {
+  font-size: 26rpx;
+  color: #888;
+}
+
+/* 导航行(题干/选项用全局 .stem/.option) */
+.nav-row {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 8rpx;
+}
+
+.nav-row .btn-primary,
+.nav-row .btn-secondary {
+  flex: 1;
+}

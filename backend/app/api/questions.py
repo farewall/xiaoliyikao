@@ -1,13 +1,10 @@
 """刷题相关 API。
 
-MVP 版刷题:
-- 组卷:按考点/章节/科目取随机题。
+- 组卷:按考点/章节/科目/多科范围取随机题。
 - 提交答案:判分 + 记录答题 + 返回解析(答完立刻看解析,是刷题闭环的一环)。
+- 题目详情:记录详情页用(题干/选项/答案/解析)。
 """
-import random
-
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -15,8 +12,9 @@ from app.models.answer_record import AnswerRecord
 from app.models.knowledge_point import KnowledgePoint
 from app.models.question import Question
 from app.models.user import User
-from app.schemas.question import AnswerResult, AnswerSubmit, QuestionOut, QuizRequest
+from app.schemas.question import AnswerResult, AnswerSubmit, QuestionDetail, QuestionOut, QuizRequest
 from app.services.auth import get_current_user
+from app.services.question_bank import pick_questions
 
 router = APIRouter(prefix="/questions", tags=["questions"])
 
@@ -27,24 +25,46 @@ def create_quiz(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> list[Question]:
-    """组一套题。可空参数:默认取全库随机题。
+    """组一套题。可空参数:默认取全库随机题。"""
+    questions = pick_questions(
+        db,
+        subjects=payload.subjects,
+        subject=payload.subject,
+        chapter=payload.chapter,
+        knowledge_point_id=payload.knowledge_point_id,
+        question_ids=payload.question_ids,
+        count=payload.count,
+    )
+    return questions
 
-    按 subject/chapter 过滤时,经考点表(knowledge_points)联查。
-    """
-    stmt = select(Question)
 
-    if payload.subject or payload.chapter or payload.knowledge_point_id:
-        stmt = stmt.join(KnowledgePoint, Question.knowledge_point_id == KnowledgePoint.id)
-        if payload.subject:
-            stmt = stmt.where(KnowledgePoint.subject == payload.subject)
-        if payload.chapter:
-            stmt = stmt.where(KnowledgePoint.chapter == payload.chapter)
-        if payload.knowledge_point_id:
-            stmt = stmt.where(KnowledgePoint.id == payload.knowledge_point_id)
+@router.get("/subjects")
+def list_subjects(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> list[str]:
+    """有题目的科目列表(配置页数据源)。"""
+    rows = (
+        db.query(KnowledgePoint.subject)
+        .join(Question, Question.knowledge_point_id == KnowledgePoint.id)
+        .distinct()
+        .order_by(KnowledgePoint.subject)
+        .all()
+    )
+    return [r[0] for r in rows]
 
-    rows = db.execute(stmt).scalars().all()
-    random.shuffle(rows)
-    return rows[: payload.count]
+
+@router.get("/{question_id}", response_model=QuestionDetail)
+def get_question(
+    question_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> Question:
+    """题目详情(含答案与解析)。记录详情页用,答题后查看。"""
+    question = db.get(Question, question_id)
+    if question is None:
+        raise HTTPException(status_code=404, detail="题目不存在")
+    return question
 
 
 @router.post("/answer", response_model=AnswerResult)

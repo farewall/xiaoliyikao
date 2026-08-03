@@ -5,6 +5,7 @@ from pydantic import BaseModel
 class AIAskRequest(BaseModel):
     question_id: int
     user_question: str  # 用户针对该题的追问
+    user_answer: list[str] | None = None  # 用户本题所选答案,便于 AI 解释"为什么错"
 
 
 class AIAskResponse(BaseModel):

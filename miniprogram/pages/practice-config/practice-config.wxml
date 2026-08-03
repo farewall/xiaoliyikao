@@ -1,0 +1,31 @@
+<view class="container">
+  <!-- 科目 -->
+  <view class="card">
+    <view class="section-title">选择科目</view>
+    <view class="chips">
+      <view
+        wx:for="{{subjects}}"
+        wx:key="*this"
+        class="chip {{selectedSubject === item ? 'chip-selected' : ''}}"
+        data-subject="{{item}}"
+        bindtap="onSelectSubject"
+      >{{item}}</view>
+    </view>
+  </view>
+
+  <!-- 题量 -->
+  <view class="card">
+    <view class="section-title">题量</view>
+    <view class="chips">
+      <view
+        wx:for="{{counts}}"
+        wx:key="*this"
+        class="chip {{selectedCount === item ? 'chip-selected' : ''}}"
+        data-count="{{item}}"
+        bindtap="onSelectCount"
+      >{{item}} 题</view>
+    </view>
+  </view>
+
+  <view class="btn-primary" bindtap="onStart">开始练习</view>
+</view>

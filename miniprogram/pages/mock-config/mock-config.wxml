@@ -1,0 +1,36 @@
+<view class="container">
+  <!-- 科目范围 -->
+  <view class="card">
+    <view class="section-title">科目范围</view>
+    <view class="chips">
+      <view
+        class="chip {{allSelected ? 'chip-selected' : ''}}"
+        bindtap="toggleAll"
+      >全科</view>
+      <view
+        wx:for="{{subjects}}"
+        wx:key="*this"
+        class="chip {{selectedMap[item] ? 'chip-selected' : ''}}"
+        data-subject="{{item}}"
+        bindtap="toggleSubject"
+      >{{item}}</view>
+    </view>
+  </view>
+
+  <!-- 卷型 -->
+  <view class="card">
+    <view class="section-title">卷型</view>
+    <view class="chips">
+      <view
+        wx:for="{{paperTypes}}"
+        wx:key="*this"
+        class="chip {{selectedPaper === item ? 'chip-selected' : ''}}"
+        data-paper="{{item}}"
+        bindtap="onSelectPaper"
+      >{{item}} 题</view>
+    </view>
+    <view class="text-secondary tip">按真实考试节奏限时:1 题 1 分钟,到时自动交卷</view>
+  </view>
+
+  <view class="btn-primary" bindtap="onStart">开始模拟</view>
+</view>

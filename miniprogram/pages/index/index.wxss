@@ -1,44 +1,138 @@
-.greeting {
+/* ===== 渐变头部 Hero ===== */
+.hero {
+  margin: -24rpx -24rpx 32rpx;
+  background: linear-gradient(135deg, #5BA9FF 0%, #2B6CB0 100%);
+  border-radius: 0 0 40rpx 40rpx;
+  padding: 48rpx 32rpx 40rpx;
+  color: #fff;
+  box-shadow: 0 12rpx 32rpx rgba(43, 108, 176, 0.28);
+}
+
+.hero-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hero-greet-title {
   font-size: 40rpx;
   font-weight: 600;
-  margin-bottom: 8rpx;
 }
 
-.section-title {
+.hero-greet-sub {
+  margin-top: 10rpx;
+  font-size: 24rpx;
+  opacity: 0.85;
+}
+
+.hero-avatar {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.22);
+  border: 2rpx solid rgba(255, 255, 255, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44rpx;
+  flex-shrink: 0;
+}
+
+/* 三个统计数字 */
+.hero-stats {
+  display: flex;
+  margin-top: 44rpx;
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 24rpx;
+  padding: 24rpx 0;
+}
+
+.hero-stat {
+  flex: 1;
+  text-align: center;
+  position: relative;
+}
+
+/* 分隔线 */
+.hero-stat + .hero-stat::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 12rpx;
+  bottom: 12rpx;
+  width: 2rpx;
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.hero-num {
+  font-size: 48rpx;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.hero-label {
+  margin-top: 8rpx;
+  font-size: 22rpx;
+  opacity: 0.8;
+}
+
+/* ===== 刷题入口 ===== */
+.entry-card {
+  display: flex;
+  align-items: center;
+  padding: 28rpx;
+  transition: transform 0.1s ease;
+}
+
+.entry-card:active {
+  transform: scale(0.98);
+}
+
+/* 渐变图标块(替代裸 emoji,视觉重心) */
+.entry-icon {
+  width: 92rpx;
+  height: 92rpx;
+  border-radius: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44rpx;
+  margin-right: 26rpx;
+  flex-shrink: 0;
+  box-shadow: 0 8rpx 18rpx rgba(43, 108, 176, 0.18);
+}
+
+.entry-icon.practice {
+  background: linear-gradient(135deg, #7CC4FF 0%, #2B6CB0 100%);
+}
+
+.entry-icon.mock {
+  background: linear-gradient(135deg, #52E0C4 0%, #22A79E 100%);
+  box-shadow: 0 8rpx 18rpx rgba(34, 167, 158, 0.2);
+}
+
+.entry-main {
+  flex: 1;
+  overflow: hidden;
+}
+
+.entry-title {
   font-size: 32rpx;
   font-weight: 600;
-  margin-bottom: 20rpx;
+  color: #2d3748;
 }
 
-.subject-item {
-  padding: 20rpx;
-  border: 2rpx solid #e2e8f0;
-  border-radius: 12rpx;
-  margin-bottom: 16rpx;
-}
-
-.subject-item:active {
-  background: #f0f7ff;
-}
-
-.subject-name {
-  font-size: 30rpx;
-  font-weight: 500;
-}
-
-.subject-desc {
+.entry-desc {
+  margin-top: 8rpx;
   font-size: 24rpx;
-  color: #888;
-  margin-top: 4rpx;
+  color: #a0aec0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.quota-bar {
-  margin-top: 20rpx;
-  padding-top: 16rpx;
-  border-top: 2rpx solid #f0f0f0;
-}
-
-.quota-num {
-  color: #2B6CB0;
-  font-weight: 600;
+.entry-arrow {
+  font-size: 44rpx;
+  color: #cbd5e1;
+  margin-left: 16rpx;
 }

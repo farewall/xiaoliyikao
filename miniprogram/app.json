@@ -1,8 +1,13 @@
 {
   "pages": [
     "pages/index/index",
+    "pages/practice-config/practice-config",
     "pages/quiz/quiz",
     "pages/explain/explain",
+    "pages/mock-config/mock-config",
+    "pages/mock/mock",
+    "pages/mock-report/mock-report",
+    "pages/history/history",
     "pages/profile/profile"
   ],
   "window": {

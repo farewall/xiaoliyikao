@@ -5,7 +5,7 @@
 
 ## 设计理念
 
-围绕「刷题 + AI 答疑 + 薄弱点」三条业务线,共 5 张表:
+围绕「刷题 + AI 答疑 + 薄弱点」三条业务线,共 6 张表:
 
 | 表 | 职责 |
 |---|---|
@@ -14,6 +14,7 @@
 | `questions` | 题目 |
 | `answer_records` | 答题记录(正确率 / 薄弱点的数据源) |
 | `ai_usages` | AI 免费配额(每日追问次数) |
+| `sessions` | 练习/模拟会话(题目构成 + 作答结果,支撑中断续考与记录回看) |
 
 ## 表结构
 
@@ -91,10 +92,34 @@
 
 **唯一约束** `(user_id, usage_date)`——一人一天一条计数记录。
 
+### 6. sessions — 会话表(练习 / 模拟测试)
+
+对应模型:`backend/app/models/session.py`
+
+统一承载两类"一轮作答":
+- `kind=practice`:练习会话,结束时一次性落库,供「练习记录 / 该轮错题回顾」
+- `kind=mock`:模拟测试会话,考试中持续更新进度(题目/答案/剩余时间),支撑「中断续考」;交卷时判分出报告
+
+| 字段 | 类型 | 说明 |
+|---|---|---|
+| `id` | int PK 自增 | |
+| `user_id` | FK→users 索引 | 会话归属用户 |
+| `kind` | varchar(16) | `practice` / `mock` |
+| `status` | varchar(16) | `in_progress` / `completed` / `abandoned` |
+| `config` | JSONB | 组卷配置:`{subject/subjects, count/paper_type, knowledge_point_id?}` |
+| `question_ids` | JSONB | 题目 id 列表(按出场顺序) |
+| `answers` | JSONB | 作答明细:`[{question_id, user_answer, duration_seconds, is_correct}]` |
+| `current_index` | int 默认 0 | 进行中位置(模拟续考用) |
+| `remaining_seconds` | int 可空 | 剩余时间(秒),仅 mock |
+| `report` | JSONB 可空 | mock 交卷后的报告(成绩/估分/各科正确率) |
+| `started_at` | timestamptz | 服务端默认生成 |
+| `finished_at` | timestamptz 可空 | 完成/放弃时间 |
+
 ## 表关系
 
 ```
 users ──1:N── answer_records
+users ──1:N── sessions
 questions ──1:N── answer_records
 knowledge_points ──1:N── questions
 knowledge_points ──self──(parent_id 预留细分)
@@ -109,6 +134,7 @@ users ──1:N── ai_usages
                     │ 1
                     │
 users ──1:N── answer_records ──N:1── questions
+users ──1:N── sessions ──(question_ids 引用 questions)
 users ──1:N── ai_usages
 ```
 
@@ -119,6 +145,7 @@ users ──1:N── ai_usages
 3. **ai_usages 一人一天一行** —— 结合唯一约束与行锁(`select_for_update`,见 `backend/app/services/quota.py`),免费配额上限锁死,并发请求也刷不破。
 4. **时间戳统一 `server_default=func.now()`** —— 时间由数据库生成,避免应用服务器时钟偏差。
 5. **答题记录逐条落库** —— `is_correct` × `knowledge_point_id` 的组合支撑按考点聚合薄弱点。
+6. **sessions 只记录"这一轮",答题明细仍归 answer_records** —— 会话表承载一轮作答的题目构成与结果（支撑中断续考、练习/模拟记录回看），薄弱点与每日统计仍由 `answer_records` 聚合，两者各司其职。
 
 ## 预留能力
 

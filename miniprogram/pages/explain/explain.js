@@ -1,42 +1,67 @@
-/**解析与答疑页:展示判分/解析,支持对本题追问 AI*/
-
+/**记录详情页:展示题目 + 你的答案 + 正确答案 + 解析 + AI 追问
+(从练习小结错题 / 模拟报告错题 / 历史记录进入,不再承担练习主流程)*/
 const app = getApp()
 
 Page({
   data: {
+    loading: true,
     questionId: null,
-    result: null,      // 判分结果(含解析)
-    question: null,    // 题目详情(题干/选项)
-    optionKeys: [],
+    question: null,       // {stem, options, answer, explanation}
+    optionStates: [],     // [{key, text, state}]
     isCorrect: false,
-    userQuestion: '',
+    answerText: '',
+    userAnswerText: '',
+
     asking: false,
     aiAnswer: '',
     aiReferences: [],
-    quotaRemaining: null
+    aiReferencesText: '',
+    quotaRemaining: null,
+    userQuestion: ''
   },
 
   onLoad(options) {
     const questionId = Number(options.questionId)
-    let result = null
+    let userAnswer = []
     try {
-      result = JSON.parse(decodeURIComponent(options.result || '{}'))
+      userAnswer = JSON.parse(decodeURIComponent(options.userAnswer || '[]')) || []
     } catch (e) {
-      result = {}
+      userAnswer = []
     }
+    const isCorrect = options.isCorrect === 'true'
+    this._userAnswer = userAnswer
     this.setData({
       questionId,
-      result,
-      isCorrect: !!result.is_correct
+      isCorrect,
+      userAnswerText: userAnswer.join('、')
     })
     this.loadQuestion(questionId)
     this.loadQuota()
   },
 
-  // 加载题目详情(题干/选项)
+  // 真正加载题目详情(题干/选项/答案/解析)
   loadQuestion(id) {
-    // MVP:题目详情通过 quiz 接口只取到题干,这里暂以判分结果兜底
-    // 完整做法:后端加 GET /questions/{id},返回题干+选项
+    app.request({ url: `/questions/${id}` })
+      .then((q) => {
+        const optionStates = Object.keys(q.options || {}).map((key) => {
+          let state = ''
+          const inCorrect = (q.answer || []).indexOf(key) > -1
+          const inUser = (this._userAnswer || []).indexOf(key) > -1
+          if (inCorrect) state = 'correct'
+          if (inUser && !inCorrect) state = 'user'
+          return { key, text: q.options[key], state }
+        })
+        this.setData({
+          loading: false,
+          question: q,
+          optionStates,
+          answerText: (q.answer || []).join('、')
+        })
+      })
+      .catch((err) => {
+        wx.showToast({ title: err || '加载失败', icon: 'none' })
+        this.setData({ loading: false })
+      })
   },
 
   loadQuota() {
@@ -49,7 +74,6 @@ Page({
     this.setData({ userQuestion: e.detail.value })
   },
 
-  // 追问 AI
   onAsk() {
     const { userQuestion, questionId, asking } = this.data
     if (asking) return
@@ -63,13 +87,15 @@ Page({
       method: 'POST',
       data: {
         question_id: questionId,
-        user_question: userQuestion
+        user_question: userQuestion,
+        user_answer: this._userAnswer || []
       }
     })
       .then((res) => {
         this.setData({
           aiAnswer: res.answer,
           aiReferences: res.references || [],
+          aiReferencesText: (res.references || []).join(' · '),
           quotaRemaining: res.quota_remaining,
           asking: false
         })
@@ -78,10 +104,5 @@ Page({
         wx.showToast({ title: err || '追问失败', icon: 'none' })
         this.setData({ asking: false })
       })
-  },
-
-  // 下一题(返回刷题页)
-  onNext() {
-    wx.navigateBack()
   }
 })

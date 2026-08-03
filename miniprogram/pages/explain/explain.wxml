@@ -2,26 +2,33 @@
   <!-- 判分结果 -->
   <view class="card">
     <view class="result {{isCorrect ? 'text-success' : 'text-danger'}}">
-      {{isCorrect ? '✓ 回答正确' : '✗ 回答错误'}}
+      {{isCorrect ? '✓ 回答正确' : '✗ 这题值得回看'}}
     </view>
     <view wx:if="{{!isCorrect}}" class="correct-answer">
-      正确答案:{{result.correct_answer.join('、')}}
+      正确答案:{{answerText}}
     </view>
-    <view class="text-secondary">你的答案:{{result.user_answer_text || '—'}}</view>
+    <view class="text-secondary">你的答案:{{userAnswerText || '—'}}</view>
   </view>
 
-  <!-- 题干回顾 -->
+  <!-- 题目回顾 -->
   <view class="card" wx:if="{{question}}">
     <view class="stem">{{question.stem}}</view>
-    <view class="options" wx:for="{{optionKeys}}" wx:key="*this">
-      <view class="option-line">{{item}}. {{question.options[item]}}</view>
+    <view
+      class="option-line opt-{{item.state}}"
+      wx:for="{{optionStates}}"
+      wx:key="key"
+    >
+      <text class="option-key">{{item.key}}</text>
+      <text class="option-text">{{item.text}}</text>
+      <text wx:if="{{item.state === 'correct'}}" class="mark">✓</text>
+      <text wx:elif="{{item.state === 'user'}}" class="mark">✗</text>
     </view>
   </view>
 
   <!-- 解析 -->
-  <view class="card" wx:if="{{result.explanation}}">
+  <view class="card" wx:if="{{question && question.explanation}}">
     <view class="section-title">解析</view>
-    <view class="explanation">{{result.explanation}}</view>
+    <view class="explanation">{{question.explanation}}</view>
   </view>
 
   <!-- AI 追问答疑 -->
@@ -43,15 +50,11 @@
       </view>
     </view>
 
-    <!-- AI 回答 -->
     <view class="ai-answer" wx:if="{{aiAnswer}}">
       <view class="ai-answer-text">{{aiAnswer}}</view>
-      <view class="ai-references text-secondary" wx:if="{{aiReferences.length}}">
-        参考:{{aiReferences.join(' · ')}}
+      <view class="ai-references text-secondary" wx:if="{{aiReferencesText}}">
+        参考:{{aiReferencesText}}
       </view>
     </view>
   </view>
-
-  <!-- 下一题 -->
-  <view class="btn-primary" bindtap="onNext">下一题</view>
 </view>

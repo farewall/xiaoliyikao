@@ -1,5 +1,5 @@
 <view class="container">
-  <!-- 用户卡片 -->
+  <!-- 用户卡 -->
   <view class="card user-card">
     <view class="avatar">🐟</view>
     <view class="user-info">
@@ -8,28 +8,62 @@
     </view>
   </view>
 
-  <!-- 薄弱点 -->
-  <view class="card">
-    <view class="section-title">薄弱点分析</view>
-    <view wx:if="{{!weakPoints.length}}" class="empty text-secondary">
-      还没有足够的答题记录,多刷几题再来看薄弱点吧
+  <!-- 学习统计(数据区) -->
+  <view class="card stats-card">
+    <view class="stat-item">
+      <view class="stat-num">{{todayCount}}</view>
+      <view class="stat-label">今日已刷(题)</view>
     </view>
-    <view class="weak-item" wx:for="{{weakPoints}}" wx:key="knowledge_point_id">
-      <view class="weak-main">
-        <text class="weak-name">{{item.subject}}·{{item.knowledge_point_name}}</text>
-        <text class="weak-accuracy text-danger">正确率 {{item.accuracy_percent}}%</text>
+    <view class="stat-sep"></view>
+    <view class="stat-item">
+      <view class="stat-num">{{totalCount}}</view>
+      <view class="stat-label">累计已刷(题)</view>
+    </view>
+  </view>
+
+  <!-- 提分点(薄弱点以「提分空间」姿态呈现,标签有证据才贴) -->
+  <view class="card">
+    <view class="section-title">提分点</view>
+    <view wx:if="{{!weakPoints.length}}" class="empty text-secondary">
+      还没有足够的答题记录,多刷几题再看提分点吧
+    </view>
+    <view
+      class="weak-card"
+      wx:for="{{weakPoints}}"
+      wx:key="knowledge_point_id"
+      data-kpid="{{item.knowledge_point_id}}"
+      bindtap="onWeakTap"
+    >
+      <view class="weak-top">
+        <view class="weak-tag">提分点</view>
+        <view class="weak-name">{{item.subject}}·{{item.knowledge_point_name}}</view>
       </view>
-      <view class="text-secondary weak-sub">
-        {{item.wrong_count}} 题做错 / 共 {{item.total_count}} 题
+      <view class="weak-meta">
+        <text class="weak-space">还有 {{item.upSpace}}% 提分空间</text>
+        <text class="text-secondary">共 {{item.total_count}} 题 · 点击针对性练习 ›</text>
       </view>
     </view>
   </view>
 
-  <!-- 配额 -->
-  <view class="card">
+  <!-- 历史记录 -->
+  <view class="card entry" bindtap="onHistory">
+    <view>
+      <view class="entry-title">历史记录</view>
+      <view class="text-secondary">练习记录 · 模拟测试记录</view>
+    </view>
+    <view class="entry-arrow">›</view>
+  </view>
+
+  <!-- 设置区 -->
+  <view class="card settings">
+    <view class="section-title">设置</view>
     <view class="quota-row">
       <text>AI 追问(免费)</text>
       <text class="text-secondary">今日剩余 {{quota}} 次</text>
+    </view>
+    <view class="set-row" bindtap="onAbout">
+      <text>关于小鲤医考</text>
+      <text class="text-secondary">v0.1.0 ›</text>
     </view>
   </view>
 </view>

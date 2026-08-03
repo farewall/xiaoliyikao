@@ -28,7 +28,8 @@ SYSTEM_PROMPT = (
     "1. 只依据提供的资料作答,不要编造资料之外的知识点;资料不足以回答时,明确说明。\n"
     "2. 讲清楚背后的医学原理,让用户真正搞懂,而不是背答案。\n"
     "3. 如果用户是追问某道题,先引用题干的对应部分,再展开解释。\n"
-    "4. 回答控制在 300 字以内,条理清晰。\n"
+    "4. 若提供了「你的答案」且与参考答案不同,先直接指出你选的那项为什么不对,再讲正确项为什么对。\n"
+    "5. 回答控制在 300 字以内,条理清晰。\n"
 )
 
 
@@ -37,33 +38,64 @@ class RAGService:
         self.client = OpenAI(api_key=settings.deepseek_api_key, base_url=settings.deepseek_base_url)
 
     # ---- 检索 ----
-    def _retrieve(self, db: Session, question_id: int) -> dict[str, str]:
-        """检索与该题相关的上下文,返回拼装好的资料文本与引用来源。"""
+    def _retrieve(self, db: Session, question_id: int, user_answer: list[str] | None = None) -> dict[str, str]:
+        """检索与该题相关的上下文,返回拼装好的资料文本与引用来源。
+
+        结构化多段检索(MVP,不依赖向量):当前考点 + 同章节兄弟考点,
+        用「学科→章节→考点」层级扩展检索广度,支撑跨考点答疑。
+        """
         question = db.get(Question, question_id)
         if question is None:
             raise KeyError(f"question {question_id} not found")
 
         kp = db.get(KnowledgePoint, question.knowledge_point_id) if question.knowledge_point_id else None
 
-        # 组装题目 + 解析
+        # 组装题目 + 用户答案 + 解析(带上用户所选项,AI 才能解释"为什么错")
         options_text = "\n".join(f"{k}. {v}" for k, v in question.options.items())
         question_block = (
             f"【题目】{question.stem}\n"
             f"【选项】\n{options_text}\n"
             f"【参考答案】{', '.join(question.answer)}\n"
-            f"【解析】{question.explanation}"
         )
+        if user_answer:
+            question_block += f"【你的答案】{', '.join(user_answer)}\n"
+        question_block += f"【解析】{question.explanation}"
 
-        # 关联考点讲解(若有)
-        kp_block = ""
-        if kp and kp.description:
-            kp_block = f"\n【考点:{kp.subject}/{kp.chapter}/{kp.name}】\n{kp.description}"
-
+        # 考点资料:当前考点 + 同章节兄弟考点
+        kp_blocks: list[str] = []
         references: list[str] = []
+
+        def add_kp(point: KnowledgePoint) -> None:
+            if not point.description:
+                return
+            kp_blocks.append(
+                f"【考点:{point.subject}/{point.chapter}/{point.name}】\n{point.description}"
+            )
+            references.append(f"考点:{point.subject}/{point.chapter}/{point.name}")
+
         if kp:
-            references.append(f"考点:{kp.subject}/{kp.chapter}/{kp.name}")
+            add_kp(kp)
+            siblings = (
+                db.query(KnowledgePoint)
+                .filter(
+                    KnowledgePoint.subject == kp.subject,
+                    KnowledgePoint.chapter == kp.chapter,
+                    KnowledgePoint.id != kp.id,
+                    KnowledgePoint.description.isnot(None),
+                )
+                .order_by(KnowledgePoint.id)
+                .limit(3)
+                .all()
+            )
+            for s in siblings:
+                add_kp(s)
+
         if question.source:
             references.append(question.source)
+
+        kp_block = "\n".join(kp_blocks)
+        if kp_block:
+            kp_block = "\n" + kp_block
 
         return {
             "context": question_block + kp_block,
@@ -71,10 +103,16 @@ class RAGService:
         }
 
     # ---- 生成 ----
-    def ask(self, db: Session, question_id: int, user_question: str) -> tuple[str, list[str]]:
+    def ask(
+        self,
+        db: Session,
+        question_id: int,
+        user_question: str,
+        user_answer: list[str] | None = None,
+    ) -> tuple[str, list[str]]:
         """针对某题的追问答疑。返回 (回答, 引用来源)。"""
         try:
-            retrieved = self._retrieve(db, question_id)
+            retrieved = self._retrieve(db, question_id, user_answer)
         except KeyError as e:
             raise ValueError(str(e)) from e
 

@@ -1,0 +1,4 @@
+/* 模拟配置页:芯片样式由全局 app.wxss 提供(.chips/.chip/.chip-selected/.section-title) */
+.tip {
+  margin-top: 20rpx;
+}

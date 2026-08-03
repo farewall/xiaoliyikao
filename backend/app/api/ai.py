@@ -33,7 +33,9 @@ def ask(
 
     # 2. RAG 答疑
     try:
-        answer, references = rag_service.ask(db, payload.question_id, payload.user_question)
+        answer, references = rag_service.ask(
+            db, payload.question_id, payload.user_question, payload.user_answer
+        )
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e)) from e
     except RuntimeError as e:

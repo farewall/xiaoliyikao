@@ -10,48 +10,64 @@
   font-size: 26rpx;
 }
 
-.stem {
-  font-size: 32rpx;
-  line-height: 1.6;
-  margin-bottom: 24rpx;
+/* 原地反馈 */
+.result {
+  font-size: 36rpx;
+  font-weight: 600;
+  margin-bottom: 12rpx;
 }
 
-.option {
-  display: flex;
-  align-items: flex-start;
-  padding: 20rpx;
-  border: 2rpx solid #e2e8f0;
-  border-radius: 12rpx;
+.correct-answer {
+  font-size: 28rpx;
+  margin-bottom: 8rpx;
+  font-weight: 500;
+}
+
+.explanation {
+  line-height: 1.7;
+  color: #4a5568;
+}
+
+/* 小结 */
+.summary-title {
+  font-size: 40rpx;
+  font-weight: 600;
   margin-bottom: 16rpx;
 }
 
-.option.selected {
-  border-color: #2B6CB0;
-  background: #f0f7ff;
+.summary-score {
+  font-size: 48rpx;
+  font-weight: 700;
+  margin-bottom: 8rpx;
+  background: linear-gradient(135deg, #5BA9FF 0%, #2B6CB0 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
-.option-key {
-  width: 48rpx;
-  height: 48rpx;
-  line-height: 48rpx;
-  text-align: center;
-  border-radius: 50%;
-  background: #edf2f7;
-  font-weight: 600;
-  margin-right: 16rpx;
-  flex-shrink: 0;
+/* 重点回顾列表 */
+.weak-item {
+  padding: 20rpx 0;
+  border-bottom: 2rpx solid #f5f5f5;
 }
 
-.option.selected .option-key {
-  background: #2B6CB0;
-  color: #fff;
+.weak-item:last-child {
+  border-bottom: none;
 }
 
-.option-text {
-  flex: 1;
+.weak-item:active {
+  background: #fafcff;
+}
+
+.weak-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.weak-name {
+  font-size: 28rpx;
   line-height: 1.5;
-}
-
-.action-row {
-  margin-top: 32rpx;
+  flex: 1;
+  margin-right: 16rpx;
 }
