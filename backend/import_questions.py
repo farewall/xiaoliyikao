@@ -22,6 +22,7 @@ from pathlib import Path
 from app.database import SessionLocal
 from app.models.knowledge_point import KnowledgePoint
 from app.models.question import Question
+from app.models.question_group import QuestionGroup
 
 OPTION_KEYS = ["A", "B", "C", "D", "E"]
 QTYPES = ("single", "multiple", "case")
@@ -83,8 +84,15 @@ def import_csv(db, path: Path) -> None:
                 kp = get_or_create_kp(db, subject, chapter, name)
                 qtype = (row.get("题型") or "single").strip()
                 year_raw = (row.get("年份") or "").strip()
+
+                # 每题归一个 single 独立题组(题组方案见 ADR 0004)
+                group = QuestionGroup(kind="single")
+                db.add(group)
+                db.flush()
                 db.add(
                     Question(
+                        group_id=group.id,
+                        position=1,
                         qtype=qtype if qtype in QTYPES else "single",
                         stem=stem,
                         options=options,

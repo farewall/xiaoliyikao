@@ -18,6 +18,7 @@ from sqlalchemy.orm import Session
 from app.config import settings
 from app.models.knowledge_point import KnowledgePoint
 from app.models.question import Question
+from app.models.question_group import QuestionGroup
 
 logger = logging.getLogger(__name__)
 
@@ -51,7 +52,15 @@ class RAGService:
         kp = db.get(KnowledgePoint, question.knowledge_point_id) if question.knowledge_point_id else None
 
         # 组装题目 + 用户答案 + 解析(带上用户所选项,AI 才能解释"为什么错")
-        options_text = "\n".join(f"{k}. {v}" for k, v in question.options.items())
+        # B 型子题 options 为空,取题组的共用选项池
+        if question.options is not None:
+            options_text = "\n".join(f"{k}. {v}" for k, v in question.options.items())
+        else:
+            group = db.get(QuestionGroup, question.group_id)
+            pool = group.options if group else None
+            options_text = (
+                "\n".join(f"{k}. {v}" for k, v in pool.items()) if pool else "(B 型共用选项池)"
+            )
         question_block = (
             f"【题目】{question.stem}\n"
             f"【选项】\n{options_text}\n"

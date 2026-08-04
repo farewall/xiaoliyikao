@@ -2,11 +2,25 @@
 from pydantic import BaseModel
 
 
+class QuestionGroupOut(BaseModel):
+    """题组信息:前端块状渲染用(共享内容 + 组类型)。"""
+
+    id: int
+    kind: str  # single / case / pool
+    scenario: str | None = None  # A3/A4 共享病例
+    options: dict | None = None  # B 型共用选项池
+
+    model_config = {"from_attributes": True}
+
+
 class QuestionOut(BaseModel):
     id: int
+    group_id: int
+    position: int
     qtype: str
     stem: str
-    options: dict
+    options: dict | None = None
+    group: QuestionGroupOut | None = None
     knowledge_point_id: int | None = None
     source: str | None = None
     year: int | None = None

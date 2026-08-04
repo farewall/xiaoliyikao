@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 
 from app.database import get_db
 from app.models.answer_record import AnswerRecord
@@ -316,7 +316,8 @@ def get_session(
     session = _get_owned_session(db, session_id, current_user.id)
 
     questions = (
-        db.query(Question).filter(Question.id.in_(session.question_ids)).all()
+        db.query(Question).options(selectinload(Question.group))
+        .filter(Question.id.in_(session.question_ids)).all()
         if session.question_ids
         else []
     )

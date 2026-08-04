@@ -99,7 +99,18 @@
       "Bash(.venv/Scripts/python.exe -X utf8 corpus/import.py)",
       "Bash(.venv/Scripts/python.exe -X utf8 import_questions.py 示例题库.csv)",
       "Bash(.venv/Scripts/python.exe -X utf8 generate_explanations.py --draft --limit 10)",
-      "Bash(curl -s -m 3 http://127.0.0.1:8000/health)"
+      "Bash(curl -s -m 3 http://127.0.0.1:8000/health)",
+      "Bash(.venv/Scripts/python.exe -m py_compile app/models/question.py app/models/question_knowledge_point.py app/models/__init__.py app/schemas/question.py seed.py)",
+      "Bash(.venv/Scripts/python.exe migrate_block_schema.py)",
+      "Bash(PYTHONIOENCODING=utf-8 .venv/Scripts/python.exe -c ' *)",
+      "Bash(PYTHONIOENCODING=utf-8 .venv/Scripts/python.exe _verify_seed.py)",
+      "Bash(.venv/Scripts/python.exe -m py_compile app/models/question.py app/models/question_group.py app/models/__init__.py app/schemas/question.py app/services/rag.py import_questions.py migrate_groups.py seed.py)",
+      "Bash(PYTHONIOENCODING=utf-8 .venv/Scripts/python.exe migrate_groups.py)",
+      "Bash(PYTHONIOENCODING=utf-8 .venv/Scripts/python.exe _verify_groups.py)",
+      "Bash(PYTHONIOENCODING=utf-8 .venv/Scripts/python.exe -c \"import app.main; print\\('app.main 导入 OK, 模型注册正常'\\)\")",
+      "Bash(.venv/Scripts/python.exe -m py_compile app/models/question.py app/schemas/question.py app/services/question_bank.py app/api/sessions.py)",
+      "Bash(PYTHONIOENCODING=utf-8 .venv/Scripts/python.exe _verify_pick.py)",
+      "Bash(PYTHONIOENCODING=utf-8 .venv/Scripts/python.exe -c \"import app.main; print\\('app.main 导入 OK'\\)\")"
     ],
     "additionalDirectories": [
       "D:\\xiaoliyikao\\backend"
