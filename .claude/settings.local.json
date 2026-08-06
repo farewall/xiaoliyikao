@@ -110,7 +110,9 @@
       "Bash(PYTHONIOENCODING=utf-8 .venv/Scripts/python.exe -c \"import app.main; print\\('app.main 导入 OK, 模型注册正常'\\)\")",
       "Bash(.venv/Scripts/python.exe -m py_compile app/models/question.py app/schemas/question.py app/services/question_bank.py app/api/sessions.py)",
       "Bash(PYTHONIOENCODING=utf-8 .venv/Scripts/python.exe _verify_pick.py)",
-      "Bash(PYTHONIOENCODING=utf-8 .venv/Scripts/python.exe -c \"import app.main; print\\('app.main 导入 OK'\\)\")"
+      "Bash(PYTHONIOENCODING=utf-8 .venv/Scripts/python.exe -c \"import app.main; print\\('app.main 导入 OK'\\)\")",
+      "Bash(ls -la \"C:\\\\Users\\\\shterm\\\\.claude\\\\skills\\\\\" 2>/dev/null; echo \"---project skills---\"; ls -la \"d:\\\\医学考研微信小程序\\\\.claude\\\\skills\\\\\" 2>/dev/null; echo \"---done---\")",
+      "Read(//c/Users/shterm/.claude/skills\" 2>/dev/**)"
     ],
     "additionalDirectories": [
       "D:\\xiaoliyikao\\backend"
